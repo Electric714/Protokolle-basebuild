@@ -24,7 +24,7 @@ jobs:
           fi
 
       - name: Resolve Swift packages
-        run: xcodebuild -resolvePackageDependencies -workspace Protokolle.xcworkspace -scheme Protokolle
+        run: xcodebuild -resolvePackageDependencies -workspace Protokolle.xcworkspace -scheme Protokolle -skipPackagePluginValidation -skipMacroValidation
 
       - name: Build (unsigned Release)
         env:
@@ -36,6 +36,8 @@ jobs:
             -configuration Release \
             -sdk iphoneos \
             -destination "generic/platform=iOS" \
+            -skipPackagePluginValidation \
+            -skipMacroValidation \
             -derivedDataPath "$DERIVED_DATA" \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
