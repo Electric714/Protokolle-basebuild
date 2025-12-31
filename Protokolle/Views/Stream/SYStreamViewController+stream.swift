@@ -76,42 +76,45 @@ extension SYStreamViewController {
 		}
 	}
 	
-	func addBatch() {
-		guard !batch.isEmpty else { return }
-		
-		var snapshot = dataSource.snapshot()
-		let currentCount = snapshot.numberOfItems
-		let newTotalCount = currentCount + batch.count
-		
-		if newTotalCount > buffer {
-			
-			if !userInformedAboutThreshold {
-				UIAlertController.showAlertWithOk(
-					title: .localized("You've reached the threshold"),
-					message: .localized("To save on performance, we've automatically started clearing logs from the start of the session.")
-				)
-				
-				logManager.isStreaming = false
-				userInformedAboutThreshold = true
-			}
-			
-			let overflowCount = min(batch.count, currentCount)
-			
-			let itemsToRemove = snapshot.itemIdentifiers.prefix(overflowCount)
-			snapshot.deleteItems(Array(itemsToRemove))
-		}
-		
-		snapshot.appendItems(batch)
-		batch = []
-		dataSourceApply(snapshot: snapshot)
-	}
+        func addBatch() {
+                guard !batch.isEmpty else { return }
+
+                var snapshot = dataSource.snapshot()
+                let overflowCount = max(0, allEntries.count - buffer)
+
+                if overflowCount > 0 {
+                        if !userInformedAboutThreshold {
+                                UIAlertController.showAlertWithOk(
+                                        title: .localized("You've reached the threshold"),
+                                        message: .localized("To save on performance, we've automatically started clearing logs from the start of the session.")
+                                )
+
+                                logManager.isStreaming = false
+                                userInformedAboutThreshold = true
+                        }
+
+                        let itemsToRemove = allEntries.prefix(overflowCount)
+                        allEntries.removeFirst(overflowCount)
+
+                        let deletions = itemsToRemove.filter { snapshot.indexOfItem($0) != nil }
+                        if !deletions.isEmpty {
+                                snapshot.deleteItems(deletions)
+                        }
+                }
+
+                let visibleBatch = batch.filter { passesTargetFilter($0.log) }
+                snapshot.appendItems(visibleBatch)
+                batch = []
+                dataSourceApply(snapshot: snapshot)
+        }
 
 	
-	@objc func clearAll() {
-		var snapshot: StepDataSourceSnapshot = .init()
-		batch = []
-		snapshot.appendSections([0])
-		dataSourceApply(snapshot: snapshot)
+        @objc func clearAll() {
+                var snapshot: StepDataSourceSnapshot = .init()
+                allEntries = []
+                batch = []
+                snapshot.appendSections([0])
+                dataSourceApply(snapshot: snapshot)
 		
 		if #available(iOS 17.0, *) {
 			setNeedsUpdateContentUnavailableConfiguration()

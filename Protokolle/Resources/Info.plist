@@ -2,21 +2,25 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>UIFileSharingEnabled</key>
-	<true/>
-	<key>CFBundleDocumentTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeName</key>
-			<string>Protokolle Log</string>
-			<key>LSHandlerRank</key>
-			<string>Owner</string>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>thewonderofyou.syslog.file</string>
-			</array>
-		</dict>
-	</array>
+        <key>CFBundleDisplayName</key>
+        <string>Keystone</string>
+        <key>CFBundleName</key>
+        <string>Keystone</string>
+        <key>UIFileSharingEnabled</key>
+        <true/>
+        <key>CFBundleDocumentTypes</key>
+        <array>
+                <dict>
+                        <key>CFBundleTypeName</key>
+                        <string>Keystone Log</string>
+                        <key>LSHandlerRank</key>
+                        <string>Owner</string>
+                        <key>LSItemContentTypes</key>
+                        <array>
+                                <string>com.electric714.keystone.log</string>
+                        </array>
+                </dict>
+        </array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -41,20 +45,21 @@
 			<array>
 				<string>public.json</string>
 			</array>
-			<key>UTTypeDescription</key>
-			<string>Protokolle Log File</string>
-			<key>UTTypeIconFiles</key>
-			<array/>
-			<key>UTTypeIdentifier</key>
-			<string>thewonderofyou.syslog.file</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>protokolle</string>
-				</array>
-			</dict>
-		</dict>
+                        <key>UTTypeDescription</key>
+                        <string>Keystone Log File</string>
+                        <key>UTTypeIconFiles</key>
+                        <array/>
+                        <key>UTTypeIdentifier</key>
+                        <string>com.electric714.keystone.log</string>
+                        <key>UTTypeTagSpecification</key>
+                        <dict>
+                                <key>public.filename-extension</key>
+                                <array>
+                                        <string>keystone</string>
+                                        <string>protokolle</string>
+                                </array>
+                        </dict>
+                </dict>
 	</array>
 </dict>
 </plist>

@@ -3,7 +3,7 @@ options:
     - LICENSE
   packagePaths:
     - Package.swift
-  prefix: thewonderofyou.syslog
+  prefix: com.electric714.keystone
   xcworkspacePath: "*.xcworkspace"
   addVersionNumbers: false
   singlePage: false
