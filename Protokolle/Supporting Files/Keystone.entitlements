@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>application-identifier</key>
+        <string>$(AppIdentifierPrefix)$(CFBundleIdentifier)</string>
+        <key>aps-environment</key>
+        <string>development</string>
+        <key>get-task-allow</key>
+        <true/>
+        <key>com.apple.developer.team-identifier</key>
+        <string>7D472L6WZ5</string>
+        <key>keychain-access-groups</key>
+        <array>
+                <string>7D472L6WZ5.*</string>
+                <string>com.apple.token</string>
+        </array>
+        <key>com.apple.security.application-groups</key>
+        <array>
+                <string>group.ea19cdfe6b1ef785.1</string>
+                <string>group.ea19cdfe6b1ef785.2</string>
+                <string>group.ea19cdfe6b1ef785.3</string>
+                <string>group.ea19cdfe6b1ef785.4</string>
+                <string>group.ea19cdfe6b1ef785.5</string>
+        </array>
+        <key>com.apple.developer.kernel.increased-debugging-memory-limit</key>
+        <true/>
+        <key>com.apple.developer.kernel.increased-memory-limit</key>
+        <true/>
+        <key>com.apple.developer.kernel.extended-virtual-addressing</key>
+        <true/>
+        <key>com.apple.developer.networking.networkextension</key>
+        <array>
+                <string>packet-tunnel-provider</string>
+                <string>content-filter-provider</string>
+                <string>dns-proxy</string>
+                <string>dns-settings</string>
+                <string>relay</string>
+                <string>url-filter-provider</string>
+                <string>hotspot-provider</string>
+                <string>app-proxy-provider</string>
+        </array>
+        <key>com.apple.developer.networking.vpn.api</key>
+        <string>allow-vpn</string>
+        <key>com.apple.developer.networking.wifi-info</key>
+        <true/>
+        <key>com.apple.developer.networking.multipath</key>
+        <true/>
+        <key>com.apple.developer.networking.HotspotConfiguration</key>
+        <true/>
+</dict>
+</plist>

@@ -36,12 +36,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		_ scene: UIScene,
 		openURLContexts URLContexts: Set<UIOpenURLContext>
 	) {
-		guard
-			let url = URLContexts.first?.url,
-			url.pathExtension == "protokolle"
-		else {
-			return
-		}
+                guard
+                        let url = URLContexts.first?.url,
+                        ["protokolle", "keystone"].contains(url.pathExtension.lowercased())
+                else {
+                        return
+                }
 		
 		guard
 			let data = try? Data(contentsOf: url),

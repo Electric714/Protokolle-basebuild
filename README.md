@@ -1,4 +1,4 @@
-# Protokolle
+# Keystone
 
 [![GitHub Release](https://img.shields.io/github/v/release/khcrysalis/protokolle?include_prereleases)](https://github.com/khcrysalis/protokolle/releases)
 [![GitHub License](https://img.shields.io/github/license/khcrysalis/protokolle?color=%23C96FAD)](https://github.com/khcrysalis/protokolle/blob/main/LICENSE)
@@ -7,7 +7,7 @@
 | :----------------------------------------------------------------------------------------: |
 | Demo of streaming trace logs from [Feather](https://github.com/khcrysalis/feather) |
 
-The iOS/iPadOS equivalent to macOS's `Console.app`. This app uses [idevice](https://github.com/jkcoxson/idevice) and lockdownd pairing to stream messages from the trace relay, allowing you to see messages from other processes within iOS. Along with having advanced filtering and options for advanced debugging and performance.
+Keystone (formerly Protokolle) is the iOS/iPadOS equivalent to macOS's `Console.app`. This app uses [idevice](https://github.com/jkcoxson/idevice) and lockdownd pairing to stream messages from the trace relay, allowing you to see messages from other processes within iOS. Along with having advanced filtering and options for advanced debugging and performance.
 
 ### Features
 
@@ -63,6 +63,10 @@ Due to how it works right now we need both a VPN and a lockdownd pairing file, t
     ```
 
 Using the makefile will automatically create an adhoc ipa inside the packages directory, using this to debug or report issues is not recommend. When making a pull request or reporting issues, it's generally advised you've used Xcode to debug your changes properly.
+
+## CI output
+
+The `build` workflow in `.github/workflows/build.yml` builds the Keystone iOS target on macOS without code signing, packages `Payload/Keystone.app` into `Keystone-unsigned.ipa`, and uploads that unsigned IPA as a workflow artifact for sideloading and testing.
 
 ## Sponsors
 

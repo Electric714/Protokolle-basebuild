@@ -1,9 +1,10 @@
-NAME := Protokolle
+NAME := Keystone
 PLATFORM := iphoneos
 SCHEMES := Protokolle
 TMP := $(TMPDIR)/$(NAME)
 STAGE := $(TMP)/stage
 APP := $(TMP)/Build/Products/Release-$(PLATFORM)
+APP_NAME := Keystone
 
 .PHONY: all clean $(SCHEMES)
 
@@ -30,12 +31,12 @@ $(SCHEMES):
 	rm -rf $(STAGE)/
 	mkdir -p $(STAGE)/Payload
 
-	mv "$(APP)/$@.app" "$(STAGE)/Payload/$@.app"
+        mv "$(APP)/$(APP_NAME).app" "$(STAGE)/Payload/$(APP_NAME).app"
 
-	cp deps/* "$(STAGE)/Payload/$@.app/" || true
+        cp deps/* "$(STAGE)/Payload/$(APP_NAME).app/" || true
 
-	rm -rf "$(STAGE)/Payload/$@.app/_CodeSignature"
-	ln -sf "$(STAGE)/Payload" Payload
-	
-	mkdir -p packages
-	zip -r9 "packages/$@.ipa" Payload
+        rm -rf "$(STAGE)/Payload/$(APP_NAME).app/_CodeSignature"
+        ln -sf "$(STAGE)/Payload" Payload
+
+        mkdir -p packages
+        zip -r9 "packages/$(APP_NAME).ipa" Payload

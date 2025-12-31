@@ -7,12 +7,12 @@
 		<dict>
 			<key>Type</key>
 			<string>PSChildPaneSpecifier</string>
-			<key>Title</key>
-			<string>Acknowledgements</string>
-			<key>File</key>
-			<string>thewonderofyou.syslog</string>
-		</dict>
-	</array>
+                        <key>Title</key>
+                        <string>Acknowledgements</string>
+                        <key>File</key>
+                        <string>com.electric714.keystone</string>
+                </dict>
+        </array>
 	<key>StringsTable</key>
 	<string>Root</string>
 </dict>

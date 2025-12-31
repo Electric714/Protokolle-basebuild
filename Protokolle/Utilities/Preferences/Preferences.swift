@@ -42,10 +42,22 @@ extension Preferences {
         )
     }
 	
-	static func bufferLimitCallback(newValue: Int) {
-		NotificationCenter.default.post(
-			Notification(name: .bufferLimitDidChange, object: newValue)
-		)
-	}
+        static func bufferLimitCallback(newValue: Int) {
+                NotificationCenter.default.post(
+                        Notification(name: .bufferLimitDidChange, object: newValue)
+                )
+        }
+
+        static func filterToTargetCallback(newValue: Bool) {
+                NotificationCenter.default.post(
+                        Notification(name: .filterToTargetDidChange, object: newValue)
+                )
+        }
+
+        static func targetBundleCallback(newValue: String) {
+                NotificationCenter.default.post(
+                        Notification(name: .targetBundleIDDidChange, object: newValue)
+                )
+        }
 	
 }

@@ -63,9 +63,10 @@ class SYStreamViewController: UICollectionViewController {
 	var userInformedAboutThreshold: Bool = false
 	var menuDelegate: SYMenuContainerViewDelegate?
 	
-	var batch: [LogEntry] = []
-	var buffer = Preferences.bufferLimit
-	var filter: EntryFilter? = Preferences.entryFilter
+        var batch: [LogEntry] = []
+        var allEntries: [LogEntry] = []
+        var buffer = Preferences.bufferLimit
+        var filter: EntryFilter? = Preferences.entryFilter
 	
 	lazy var timer = makeTimer()
 		
@@ -134,13 +135,31 @@ class SYStreamViewController: UICollectionViewController {
 			RunLoop.main.add(self.timer, forMode: .common)
 		}
 		
-		let _ = NotificationCenter.addObserver(
-			name: .bufferLimitDidChange,
-			castTo: Int.self
-		) { newValue in
-			NSLog("Set buffer to \(newValue)")
-			self.buffer = newValue
-		}
+                let _ = NotificationCenter.addObserver(
+                        name: .bufferLimitDidChange,
+                        castTo: Int.self
+                ) { newValue in
+                        NSLog("Set buffer to \(newValue)")
+                        self.buffer = newValue
+                }
+
+                let _ = NotificationCenter.addObserver(
+                        name: .targetBundleIDDidChange,
+                        castTo: String.self
+                ) { _ in
+                        DispatchQueue.main.async {
+                                self.applyTargetFilterToStoredEntries()
+                        }
+                }
+
+                let _ = NotificationCenter.addObserver(
+                        name: .filterToTargetDidChange,
+                        castTo: Bool.self
+                ) { _ in
+                        DispatchQueue.main.async {
+                                self.applyTargetFilterToStoredEntries()
+                        }
+                }
 		
 		let _ = NotificationCenter.addObserver(
 			name: .isStreamingDidChange,
@@ -456,7 +475,7 @@ extension SYStreamViewController {
 			return
 		}
 		
-		let fileName = "\(entry.processName ?? "Unknown")_\(entry.timestamp).protokolle"
+                let fileName = "\(entry.processName ?? "Unknown")_\(entry.timestamp).keystone"
 		let fileURL = fileManager.exports.appendingPathComponent(fileName)
 		
 		guard fileManager.createFile(atPath: fileURL.path, contents: data) else {
