@@ -8,9 +8,13 @@
 import Foundation.NSNotification
 
 extension Notification.Name {
-	static let refreshSpeedDidChange = Notification.Name("SY.refreshSpeedDidChange")
-	static let bufferLimitDidChange = Notification.Name("SY.bufferLimitDidChange")
-	static let entryFilterDidChange = Notification.Name("SY.entryFilterDidChange")
+        static let refreshSpeedDidChange = Notification.Name("SY.refreshSpeedDidChange")
+        static let bufferLimitDidChange = Notification.Name("SY.bufferLimitDidChange")
+        static let entryFilterDidChange = Notification.Name("SY.entryFilterDidChange")
+        static let targetBundleIDDidChange = Notification.Name("SY.targetBundleIDDidChange")
+        static let filterToTargetDidChange = Notification.Name("SY.filterToTargetDidChange")
+        static let debugSessionToggleStream = Notification.Name("SY.debugSession.toggleStream")
+        static let debugSessionExportBundle = Notification.Name("SY.debugSession.exportBundle")
 }
 
 extension NotificationCenter {

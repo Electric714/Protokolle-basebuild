@@ -1,0 +1,67 @@
+name: Build unsigned IPA
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Initialize submodules
+        run: git submodule update --init --recursive
+
+      - name: Verify Package.swift exists
+        run: |
+          if [ ! -f IDeviceKit/Package.swift ]; then
+            echo "Expected IDeviceKit/Package.swift but it is missing"
+            ls -la IDeviceKit || true
+            exit 1
+          fi
+
+      - name: Resolve Swift packages
+        run: xcodebuild -resolvePackageDependencies -workspace Protokolle.xcworkspace -scheme Protokolle
+
+      - name: Build (unsigned Release)
+        env:
+          DERIVED_DATA: ${{ github.workspace }}/DerivedData
+        run: |
+          xcodebuild \
+            -workspace Protokolle.xcworkspace \
+            -scheme Protokolle \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination "generic/platform=iOS" \
+            -derivedDataPath "$DERIVED_DATA" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            DEVELOPMENT_TEAM="" \
+            build
+
+      - name: Package unsigned IPA
+        env:
+          DERIVED_DATA: ${{ github.workspace }}/DerivedData
+        run: |
+          APP_PATH="$DERIVED_DATA/Build/Products/Release-iphoneos/Keystone.app"
+          if [ ! -d "$APP_PATH" ]; then
+            echo "App not found at $APP_PATH"
+            find "$DERIVED_DATA/Build/Products" -maxdepth 3 -type d -name "*.app"
+            exit 1
+          fi
+
+          rm -rf Payload
+          mkdir -p Payload
+          cp -R "$APP_PATH" Payload/
+          (cd Payload && zip -yr ../Keystone-unsigned.ipa .)
+
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: Keystone-unsigned
+          path: Keystone-unsigned.ipa

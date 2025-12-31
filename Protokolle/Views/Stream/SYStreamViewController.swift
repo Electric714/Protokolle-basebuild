@@ -63,9 +63,10 @@ class SYStreamViewController: UICollectionViewController {
 	var userInformedAboutThreshold: Bool = false
 	var menuDelegate: SYMenuContainerViewDelegate?
 	
-	var batch: [LogEntry] = []
-	var buffer = Preferences.bufferLimit
-	var filter: EntryFilter? = Preferences.entryFilter
+        var batch: [LogEntry] = []
+        var allEntries: [LogEntry] = []
+        var buffer = Preferences.bufferLimit
+        var filter: EntryFilter? = Preferences.entryFilter
 	
 	lazy var timer = makeTimer()
 		
@@ -123,24 +124,42 @@ class SYStreamViewController: UICollectionViewController {
 		dataSourceApply(snapshot: snapshot)
 	}
 	
-	func setupListeners() {
-		let _ = NotificationCenter.addObserver(
-			name: .refreshSpeedDidChange,
-			castTo: TimeInterval.self
-		) { newValue in
+        func setupListeners() {
+                let _ = NotificationCenter.addObserver(
+                        name: .refreshSpeedDidChange,
+                        castTo: TimeInterval.self
+                ) { newValue in
 			NSLog("Set timer to \(newValue)")
 			self.timer.invalidate()
 			self.timer = self.makeTimer(interval: newValue)
 			RunLoop.main.add(self.timer, forMode: .common)
 		}
 		
-		let _ = NotificationCenter.addObserver(
-			name: .bufferLimitDidChange,
-			castTo: Int.self
-		) { newValue in
-			NSLog("Set buffer to \(newValue)")
-			self.buffer = newValue
-		}
+                let _ = NotificationCenter.addObserver(
+                        name: .bufferLimitDidChange,
+                        castTo: Int.self
+                ) { newValue in
+                        NSLog("Set buffer to \(newValue)")
+                        self.buffer = newValue
+                }
+
+                let _ = NotificationCenter.addObserver(
+                        name: .targetBundleIDDidChange,
+                        castTo: String.self
+                ) { _ in
+                        DispatchQueue.main.async {
+                                self.applyTargetFilterToStoredEntries()
+                        }
+                }
+
+                let _ = NotificationCenter.addObserver(
+                        name: .filterToTargetDidChange,
+                        castTo: Bool.self
+                ) { _ in
+                        DispatchQueue.main.async {
+                                self.applyTargetFilterToStoredEntries()
+                        }
+                }
 		
 		let _ = NotificationCenter.addObserver(
 			name: .isStreamingDidChange,
@@ -160,24 +179,49 @@ class SYStreamViewController: UICollectionViewController {
 			}
 		}
 		
-		let _ = NotificationCenter.addObserver(
-			name: .entryFilterDidChange,
-			castTo: EntryFilter.self
-		) { newValue in
-			self.filter = newValue
+                let _ = NotificationCenter.addObserver(
+                        name: .entryFilterDidChange,
+                        castTo: EntryFilter.self
+                ) { newValue in
+                        self.filter = newValue
 			
 			DispatchQueue.main.async {
 				self.filterButton.updateImage(
 					systemImageName: "line.3.horizontal.decrease.circle.fill",
 					highlighted: false,
 					showDot: self.filter?.isEnabled ?? false
-				)
-			}
-		}
-		
-		NotificationCenter.default.addObserver(
-			self,
-			selector: #selector(showInvalidAlert),
+                                )
+                        }
+                }
+
+                let _ = NotificationCenter.addObserver(
+                        name: .debugSessionToggleStream,
+                        castTo: Bool.self
+                ) { shouldStart in
+                        DispatchQueue.main.async {
+                                if shouldStart && !self.logManager.isStreaming {
+                                        self.stopOrStartStream()
+                                } else if !shouldStart && self.logManager.isStreaming {
+                                        self.stopOrStartStream()
+                                }
+                        }
+                }
+
+                let _ = NotificationCenter.addObserver(
+                        name: .debugSessionExportBundle,
+                        castTo: DebugSessionExportRequest.self
+                ) { request in
+                        DispatchQueue.main.async {
+                                self.exportBugBundle(
+                                        filterToTargetOnly: request.filterToTarget,
+                                        targetBundleID: request.targetBundleID
+                                )
+                        }
+                }
+
+                NotificationCenter.default.addObserver(
+                        self,
+                        selector: #selector(showInvalidAlert),
 			name: .heartbeatInvalidHost,
 			object: nil
 		)
@@ -387,9 +431,9 @@ extension SYStreamViewController {
 		Preferences.entryFilter = entryFilter
 	}
 	
-	func modifyAcceptedTypes(for type: LogMessageEventModel, hide: Bool) {
-		var entryFilter = Preferences.entryFilter ?? EntryFilter()
-		entryFilter.isEnabled = true
+        func modifyAcceptedTypes(for type: LogMessageEventModel, hide: Bool) {
+                var entryFilter = Preferences.entryFilter ?? EntryFilter()
+                entryFilter.isEnabled = true
 		
 		if hide {
 			if entryFilter.acceptedTypes.contains(type) {
@@ -401,22 +445,53 @@ extension SYStreamViewController {
 			}
 		}
 		
-		Preferences.entryFilter = entryFilter
-	}
+                Preferences.entryFilter = entryFilter
+        }
+
+        func passesTargetFilter(_ entry: LogEntryModel) -> Bool {
+                let target = Preferences.targetBundleID.trimmingCharacters(in: .whitespacesAndNewlines)
+
+                guard Preferences.filterToTarget, !target.isEmpty else {
+                        return true
+                }
+
+                let matchesProcess = entry.processName?.localizedCaseInsensitiveContains(target) ?? false
+                let matchesMessage = entry.message?.localizedCaseInsensitiveContains(target) ?? false
+                let matchesSubsystem = entry.label?.subsystem?.localizedCaseInsensitiveContains(target) ?? false
+                let matchesCategory = entry.label?.category?.localizedCaseInsensitiveContains(target) ?? false
+
+                return matchesProcess || matchesMessage || matchesSubsystem || matchesCategory
+        }
+
+        func applyTargetFilterToStoredEntries() {
+                addBatch()
+
+                var snapshot = StepDataSourceSnapshot()
+                snapshot.appendSections([0])
+
+                let filteredEntries = allEntries.filter { passesTargetFilter($0.log) }
+                snapshot.appendItems(filteredEntries)
+
+                dataSourceApply(snapshot: snapshot)
+
+                if #available(iOS 17.0, *) {
+                        setNeedsUpdateContentUnavailableConfiguration()
+                }
+        }
 }
 
 // MARK: - Class extension: Export
 extension SYStreamViewController {
-	func export(entry: LogEntryModel) {
-		let fileManager = FileManager.default
-		let encoder = JSONEncoder()
-		encoder.outputFormatting = [.prettyPrinted, .withoutEscapingSlashes, .sortedKeys]
+        func export(entry: LogEntryModel) {
+                let fileManager = FileManager.default
+                let encoder = JSONEncoder()
+                encoder.outputFormatting = [.prettyPrinted, .withoutEscapingSlashes, .sortedKeys]
 		
 		guard let data = try? encoder.encode(CodableLogEntry(log: entry)) else {
 			return
 		}
 		
-		let fileName = "\(entry.processName ?? "Unknown")_\(entry.timestamp).protokolle"
+                let fileName = "\(entry.processName ?? "Unknown")_\(entry.timestamp).keystone"
 		let fileURL = fileManager.exports.appendingPathComponent(fileName)
 		
 		guard fileManager.createFile(atPath: fileURL.path, contents: data) else {
@@ -426,7 +501,95 @@ extension SYStreamViewController {
 		let activityVC = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
 		activityVC.popoverPresentationController?.sourceView = view
 		activityVC.popoverPresentationController?.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
-		
-		present(activityVC, animated: true)
-	}
+
+                present(activityVC, animated: true)
+        }
+
+        func exportBugBundle(filterToTargetOnly: Bool, targetBundleID: String) {
+                let fileManager = FileManager.default
+                let timestamp = ISO8601DateFormatter()
+                timestamp.formatOptions = [.withInternetDateTime, .withDashSeparatorInDate, .withColonSeparatorInTime]
+
+                let bundleFolderName = "BugBundle_\(timestamp.string(from: Date()).replacingOccurrences(of: ":", with: "-"))"
+                let bundleURL = fileManager.exports.appendingPathComponent(bundleFolderName)
+
+                do {
+                        try fileManager.createDirectory(at: bundleURL, withIntermediateDirectories: true)
+                } catch {
+                        UIAlertController.showAlertWithOk(
+                                title: .localized("Export"),
+                                message: error.localizedDescription
+                        )
+                        return
+                }
+
+                let logsURL = bundleURL.appendingPathComponent("logs.json")
+                let summaryURL = bundleURL.appendingPathComponent("summary.json")
+                let encoder = JSONEncoder()
+                encoder.outputFormatting = [.prettyPrinted, .withoutEscapingSlashes, .sortedKeys]
+
+                let target = targetBundleID.trimmingCharacters(in: .whitespacesAndNewlines)
+
+                let filtered = allEntries.filter { entry in
+                        guard filterToTargetOnly, !target.isEmpty else { return true }
+
+                        let log = entry.log
+                        let matchesProcess = log.processName?.localizedCaseInsensitiveContains(target) ?? false
+                        let matchesMessage = log.message?.localizedCaseInsensitiveContains(target) ?? false
+                        let matchesSubsystem = log.label?.subsystem?.localizedCaseInsensitiveContains(target) ?? false
+                        let matchesCategory = log.label?.category?.localizedCaseInsensitiveContains(target) ?? false
+
+                        return matchesProcess || matchesMessage || matchesSubsystem || matchesCategory
+                }
+
+                let logPayload = filtered.map { CodableLogEntry(log: $0.log) }
+
+                do {
+                        let data = try encoder.encode(logPayload)
+                        try data.write(to: logsURL)
+                } catch {
+                        UIAlertController.showAlertWithOk(
+                                title: .localized("Export"),
+                                message: error.localizedDescription
+                        )
+                        return
+                }
+
+                let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+                let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
+
+                let summary = DebugSessionSummary(
+                        createdAt: Date(),
+                        appVersion: version,
+                        appBuild: build,
+                        deviceName: UIDevice.current.name,
+                        systemVersion: UIDevice.current.systemVersion,
+                        targetBundleID: target,
+                        filterToTarget: filterToTargetOnly,
+                        preferences: DebugSessionSummary.PreferencesSummary(
+                                refreshSpeed: Preferences.refreshSpeed,
+                                bufferLimit: Preferences.bufferLimit,
+                                entryFilter: Preferences.entryFilter,
+                                filterToTarget: Preferences.filterToTarget,
+                                targetBundleID: Preferences.targetBundleID
+                        )
+                )
+
+                do {
+                        let data = try encoder.encode(summary)
+                        try data.write(to: summaryURL)
+                } catch {
+                        UIAlertController.showAlertWithOk(
+                                title: .localized("Export"),
+                                message: error.localizedDescription
+                        )
+                        return
+                }
+
+                let activityVC = UIActivityViewController(activityItems: [bundleURL], applicationActivities: nil)
+                activityVC.popoverPresentationController?.sourceView = view
+                activityVC.popoverPresentationController?.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
+
+                present(activityVC, animated: true)
+        }
 }

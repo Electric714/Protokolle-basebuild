@@ -13,33 +13,35 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	var currentScene: UIScene?
 	var window: UIWindow?
 
-	func scene(
-		_ scene: UIScene,
-		willConnectTo session: UISceneSession,
-		options connectionOptions: UIScene.ConnectionOptions
-	) {
-		self.currentScene = scene
-		guard let windowScene = scene as? UIWindowScene else { return }
-		
-		let window = UIWindow(windowScene: windowScene)
-		let controller = SYMenuContainerViewController()
+        func scene(
+                _ scene: UIScene,
+                willConnectTo session: UISceneSession,
+                options connectionOptions: UIScene.ConnectionOptions
+        ) {
+                self.currentScene = scene
+                guard let windowScene = scene as? UIWindowScene else { return }
 
-		window.tintColor = .systemGreen
-		window.rootViewController = controller
-		window.makeKeyAndVisible()
-		self.window = window
-	}
+                let window = UIWindow(windowScene: windowScene)
+                let controller = SYMenuContainerViewController()
+
+                window.tintColor = .systemGreen
+                window.rootViewController = controller
+                window.makeKeyAndVisible()
+                self.window = window
+
+                presentOnboardingIfNeeded(on: controller)
+        }
 	
 	func scene(
 		_ scene: UIScene,
 		openURLContexts URLContexts: Set<UIOpenURLContext>
 	) {
-		guard
-			let url = URLContexts.first?.url,
-			url.pathExtension == "protokolle"
-		else {
-			return
-		}
+                guard
+                        let url = URLContexts.first?.url,
+                        ["protokolle", "keystone"].contains(url.pathExtension.lowercased())
+                else {
+                        return
+                }
 		
 		guard
 			let data = try? Data(contentsOf: url),
@@ -53,10 +55,26 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 			rootViewController: SYStreamDetailViewController(with: decoded.log)
 		)
 		
-		topController.present(
-			controller,
-			animated: true
-		)
-	}
+                topController.present(
+                        controller,
+                        animated: true
+                )
+        }
+
+        private func presentOnboardingIfNeeded(on controller: UIViewController) {
+                guard Preferences.isOnboarding else { return }
+
+                DispatchQueue.main.async {
+                        let onboarding = UIHostingController(
+                                rootView: OnboardingView {
+                                        Preferences.isOnboarding = false
+                                }
+                        )
+
+                        onboarding.modalPresentationStyle = .formSheet
+                        onboarding.modalTransitionStyle = .coverVertical
+                        controller.present(onboarding, animated: true)
+                }
+        }
 }
 
