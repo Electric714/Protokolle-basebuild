@@ -10,20 +10,26 @@ import CoreLocation
 
 /// A set of user controlled preferences.
 enum Preferences {
-	/// Onboarding
-	@Storage(key: "SY.isOnboarding", defaultValue: true)
-	static var isOnboarding: Bool
-	/// Stream refresh speed
+        /// Onboarding
+        @Storage(key: "SY.isOnboarding", defaultValue: true)
+        static var isOnboarding: Bool
+        /// Stream refresh speed
     @Storage(key: "SY.refreshSpeed", defaultValue: 1.0, callback: refreshSpeedCallback)
     static var refreshSpeed: Double
-	/// Stream buffer limit
-	@Storage(key: "SY.bufferLimit", defaultValue: 75000, callback: bufferLimitCallback)
-	static var bufferLimit: Int
-	/// Users custom filters set
-	@CodableStorage(key: "SY.entryFilter", defaultValue: nil, handler: { _, newValue in
-		NotificationCenter.default.post(
-			Notification(name: .entryFilterDidChange, object: newValue)
-		)
+        /// Stream buffer limit
+        @Storage(key: "SY.bufferLimit", defaultValue: 75000, callback: bufferLimitCallback)
+        static var bufferLimit: Int
+        /// Target bundle identifier for debug workflows
+        @Storage(key: "SY.targetBundleID", defaultValue: "")
+        static var targetBundleID: String
+        /// Whether to limit logs to the configured target bundle identifier
+        @Storage(key: "SY.filterToTarget", defaultValue: false)
+        static var filterToTarget: Bool
+        /// Users custom filters set
+        @CodableStorage(key: "SY.entryFilter", defaultValue: nil, handler: { _, newValue in
+                NotificationCenter.default.post(
+                        Notification(name: .entryFilterDidChange, object: newValue)
+                )
 	})
 	static var entryFilter: EntryFilter?
 }
