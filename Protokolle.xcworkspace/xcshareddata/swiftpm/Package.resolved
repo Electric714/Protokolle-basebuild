@@ -20,15 +20,6 @@
       }
     },
     {
-      "identity" : "licenseplist",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mono0926/LicensePlist",
-      "state" : {
-        "revision" : "ab1692c16f4ce50fc134a8f51179f3310d41c5ef",
-        "version" : "3.27.1"
-      }
-    },
-    {
       "identity" : "loggerapi",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Kitura/LoggerAPI.git",

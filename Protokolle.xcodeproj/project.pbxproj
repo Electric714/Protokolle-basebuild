@@ -89,9 +89,8 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-				33350AEE2DE039420093599B /* PBXTargetDependency */,
-			);
+                        dependencies = (
+                        );
 			fileSystemSynchronizedGroups = (
 				33F7C1672DD51529003FF92B /* Protokolle */,
 			);
@@ -128,10 +127,9 @@
 			);
 			mainGroup = 33F7C15C2DD51529003FF92B;
 			minimizedProjectReferenceProxies = 1;
-			packageReferences = (
-				33350A662DE037F70093599B /* XCRemoteSwiftPackageReference "LicensePlist" */,
-				3349EAD02DF04CC100E317ED /* XCLocalSwiftPackageReference "IDeviceKit" */,
-			);
+                        packageReferences = (
+                                3349EAD02DF04CC100E317ED /* XCLocalSwiftPackageReference "IDeviceKit" */,
+                        );
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 33F7C1662DD51529003FF92B /* Products */;
 			projectDirPath = "";
@@ -180,10 +178,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		33350AEE2DE039420093599B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = 33350AED2DE039420093599B /* LicensePlistBuildTool */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -644,33 +638,17 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		3349EAD02DF04CC100E317ED /* XCLocalSwiftPackageReference "IDeviceKit" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = IDeviceKit;
-		};
+                3349EAD02DF04CC100E317ED /* XCLocalSwiftPackageReference "IDeviceKit" */ = {
+                        isa = XCLocalSwiftPackageReference;
+                        relativePath = IDeviceKit;
+                };
 /* End XCLocalSwiftPackageReference section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		33350A662DE037F70093599B /* XCRemoteSwiftPackageReference "LicensePlist" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/mono0926/LicensePlist";
-			requirement = {
-				kind = exactVersion;
-				version = 3.27.1;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
-		33350AED2DE039420093599B /* LicensePlistBuildTool */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 33350A662DE037F70093599B /* XCRemoteSwiftPackageReference "LicensePlist" */;
-			productName = "plugin:LicensePlistBuildTool";
-		};
-		3349EAD12DF04CC100E317ED /* IDeviceSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = IDeviceSwift;
-		};
+                3349EAD12DF04CC100E317ED /* IDeviceSwift */ = {
+                        isa = XCSwiftPackageProductDependency;
+                        productName = IDeviceSwift;
+                };
 /* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 33F7C15D2DD51529003FF92B /* Project object */;
