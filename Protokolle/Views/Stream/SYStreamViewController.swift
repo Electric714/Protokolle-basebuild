@@ -462,22 +462,6 @@ extension SYStreamViewController {
 
                 return matchesProcess || matchesMessage || matchesSubsystem || matchesCategory
         }
-
-        func applyTargetFilterToStoredEntries() {
-                addBatch()
-
-                var snapshot = StepDataSourceSnapshot()
-                snapshot.appendSections([0])
-
-                let filteredEntries = allEntries.filter { passesTargetFilter($0.log) }
-                snapshot.appendItems(filteredEntries)
-
-                dataSourceApply(snapshot: snapshot)
-
-                if #available(iOS 17.0, *) {
-                        setNeedsUpdateContentUnavailableConfiguration()
-                }
-        }
 }
 
 // MARK: - Class extension: Export
@@ -528,9 +512,10 @@ extension SYStreamViewController {
                 let encoder = JSONEncoder()
                 encoder.outputFormatting = [.prettyPrinted, .withoutEscapingSlashes, .sortedKeys]
 
+                let snapshotEntries = dataSource.snapshot().itemIdentifiers + batch
                 let target = targetBundleID.trimmingCharacters(in: .whitespacesAndNewlines)
 
-                let filtered = allEntries.filter { entry in
+                let filtered = snapshotEntries.filter { entry in
                         guard filterToTargetOnly, !target.isEmpty else { return true }
 
                         let log = entry.log

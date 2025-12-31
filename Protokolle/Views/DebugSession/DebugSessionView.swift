@@ -53,12 +53,6 @@ struct DebugSessionView: View {
                                 )
                                 .ignoresSafeArea()
                         }
-                        .onChange(of: targetBundleID) { newValue in
-                                Preferences.targetBundleID = newValue
-                        }
-                        .onChange(of: filterToTarget) { newValue in
-                                Preferences.filterToTarget = newValue
-                        }
                 }
         }
 }
@@ -87,7 +81,7 @@ private extension DebugSessionView {
                         .disabled(isStreaming)
                         .tint(.accentColor)
                 } footer: {
-                        Text(.localized("Keystone relies on loopback VPN routing and a valid pairing record to reach the device services."))
+                        Text(.localized("Protokolle relies on loopback VPN routing and a valid pairing record to reach the device services."))
                 }
         }
 

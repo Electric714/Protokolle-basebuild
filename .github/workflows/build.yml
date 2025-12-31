@@ -10,19 +10,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Initialize submodules
-        run: git submodule update --init --recursive
-
-      - name: Verify Package.swift exists
-        run: |
-          if [ ! -f IDeviceKit/Package.swift ]; then
-            echo "Expected IDeviceKit/Package.swift but it is missing"
-            ls -la IDeviceKit || true
-            exit 1
-          fi
 
       - name: Resolve Swift packages
         run: xcodebuild -resolvePackageDependencies -workspace Protokolle.xcworkspace -scheme Protokolle
