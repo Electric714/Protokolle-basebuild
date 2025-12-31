@@ -18,6 +18,10 @@ The iOS/iPadOS equivalent to macOS's `Console.app`. This app uses [idevice](http
 - Ability to import/export logs to be viewed later.
 - Of course, open source and free.
 
+## Debug Session
+
+Use the **Debug Session** entry in the menu to guide live debugging: verify tunnel reachability and pairing status, start or stop the heartbeat, kick off syslog streaming, pick a target bundle identifier to focus filtering, and export a "Bug Bundle" that includes filtered logs plus a summary of your settings. Everything runs against the existing log viewer and exports directory—no signing or extra setup required.
+
 ## Download
 
 <a href="https://apps.apple.com/us/app/protokolle/id6746388316" target="_blank" rel="noopener noreferrer">

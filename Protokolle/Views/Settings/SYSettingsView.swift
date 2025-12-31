@@ -20,14 +20,20 @@ struct SYSettingsView: View {
 	
 	// MARK: Body
 	
-	var body: some View {
-		SYNavigationView(.localized("Settings"), displayMode: .large) {
-			Form {
-				_general()
-				
-				Section(.localized("Pairing")) {
-					NavigationLink(.localized("Tunnel & Pairing")) {
-						SYTunnelView()
+        var body: some View {
+                SYNavigationView(.localized("Settings"), displayMode: .large) {
+                        Form {
+                                Section(.localized("Sessions")) {
+                                        NavigationLink(.localized("Debug Session")) {
+                                                DebugSessionView()
+                                        }
+                                }
+
+                                _general()
+
+                                Section(.localized("Pairing")) {
+                                        NavigationLink(.localized("Tunnel & Pairing")) {
+                                                SYTunnelView()
 					}
 				}
 				

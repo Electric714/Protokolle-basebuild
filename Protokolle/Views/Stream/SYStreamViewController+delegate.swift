@@ -10,11 +10,11 @@ import IDeviceSwift
 
 // MARK: - Class extension: SystemLogManagerDelegate
 extension SYStreamViewController: SystemLogManagerDelegate {
-	func activityStream(didRecieveEntry entry: LogEntry) {
-		if filter?.entryPassesFilter(entry.log) ?? true {
-			batch.append(entry)
-		}
-	}
-	
-	func activityStream(didRecieveString entryString: String) {}
+        func activityStream(didRecieveEntry entry: LogEntry) {
+                if passesTargetFilter(entry.log) && (filter?.entryPassesFilter(entry.log) ?? true) {
+                        batch.append(entry)
+                }
+        }
+
+        func activityStream(didRecieveString entryString: String) {}
 }
