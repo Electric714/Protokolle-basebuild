@@ -7,12 +7,26 @@ on:
 jobs:
   build:
     runs-on: macos-latest
+    env:
+      CI: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Initialize submodules
+        run: git submodule update --init --recursive
+
+      - name: Verify IDeviceKit package is present
+        run: |
+          if [ ! -f IDeviceKit/Package.swift ]; then
+            echo "IDeviceKit/Package.swift is missing"
+            exit 1
+          fi
 
       - name: Resolve Swift packages
-        run: xcodebuild -resolvePackageDependencies -workspace Protokolle.xcworkspace -scheme Protokolle
+        run: xcodebuild -resolvePackageDependencies -workspace Protokolle.xcworkspace -scheme Protokolle -skipPackagePluginValidation -skipMacroValidation
 
       - name: Build (unsigned Release)
         env:
@@ -24,6 +38,8 @@ jobs:
             -configuration Release \
             -sdk iphoneos \
             -destination "generic/platform=iOS" \
+            -skipPackagePluginValidation \
+            -skipMacroValidation \
             -derivedDataPath "$DERIVED_DATA" \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \

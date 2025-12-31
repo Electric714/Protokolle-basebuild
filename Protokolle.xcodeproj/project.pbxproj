@@ -89,9 +89,8 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-				33350AEE2DE039420093599B /* PBXTargetDependency */,
-			);
+                        dependencies = (
+                        );
 			fileSystemSynchronizedGroups = (
 				33F7C1672DD51529003FF92B /* Protokolle */,
 			);
@@ -128,10 +127,9 @@
 			);
 			mainGroup = 33F7C15C2DD51529003FF92B;
 			minimizedProjectReferenceProxies = 1;
-			packageReferences = (
-				33350A662DE037F70093599B /* XCRemoteSwiftPackageReference "LicensePlist" */,
-				3349EAD02DF04CC100E317ED /* XCLocalSwiftPackageReference "IDeviceKit" */,
-			);
+                        packageReferences = (
+                                3349EAD02DF04CC100E317ED /* XCLocalSwiftPackageReference "IDeviceKit" */,
+                        );
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 33F7C1662DD51529003FF92B /* Products */;
 			projectDirPath = "";
@@ -164,8 +162,8 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "echo \"Will copy acknowledgements\"\n\nACKNOWLEDGEMENTS_DIR=${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/com.mono0926.LicensePlist.Output\nDESTINATION_PATH=${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Settings.bundle/\n\ncp -r \"${ACKNOWLEDGEMENTS_DIR}\"/com.electric714.keystone \"${DESTINATION_PATH}\"\ncp -r \"${ACKNOWLEDGEMENTS_DIR}\"/com.electric714.keystone.plist \"${DESTINATION_PATH}\"\nrm -rf \"${ACKNOWLEDGEMENTS_DIR}\"\n";
+                        shellPath = /bin/sh;
+                        shellScript = "if [ \"${GITHUB_ACTIONS}\" = \"true\" ] || [ \"${CI}\" = \"true\" ]; then\n  echo \"Skipping LicensePlist during CI build\"\n  exit 0\nfi\n\necho \"Will copy acknowledgements\"\n\nACKNOWLEDGEMENTS_DIR=${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/com.mono0926.LicensePlist.Output\nDESTINATION_PATH=${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Settings.bundle/\n\ncp -r \"${ACKNOWLEDGEMENTS_DIR}\"/com.electric714.keystone \"${DESTINATION_PATH}\"\ncp -r \"${ACKNOWLEDGEMENTS_DIR}\"/com.electric714.keystone.plist \"${DESTINATION_PATH}\"\nrm -rf \"${ACKNOWLEDGEMENTS_DIR}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -180,10 +178,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		33350AEE2DE039420093599B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = 33350AED2DE039420093599B /* LicensePlistBuildTool */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -644,33 +638,17 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		3349EAD02DF04CC100E317ED /* XCLocalSwiftPackageReference "IDeviceKit" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = IDeviceKit;
-		};
+                3349EAD02DF04CC100E317ED /* XCLocalSwiftPackageReference "IDeviceKit" */ = {
+                        isa = XCLocalSwiftPackageReference;
+                        relativePath = IDeviceKit;
+                };
 /* End XCLocalSwiftPackageReference section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		33350A662DE037F70093599B /* XCRemoteSwiftPackageReference "LicensePlist" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/mono0926/LicensePlist";
-			requirement = {
-				kind = exactVersion;
-				version = 3.27.1;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
-		33350AED2DE039420093599B /* LicensePlistBuildTool */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 33350A662DE037F70093599B /* XCRemoteSwiftPackageReference "LicensePlist" */;
-			productName = "plugin:LicensePlistBuildTool";
-		};
-		3349EAD12DF04CC100E317ED /* IDeviceSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = IDeviceSwift;
-		};
+                3349EAD12DF04CC100E317ED /* IDeviceSwift */ = {
+                        isa = XCSwiftPackageProductDependency;
+                        productName = IDeviceSwift;
+                };
 /* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 33F7C15D2DD51529003FF92B /* Project object */;
