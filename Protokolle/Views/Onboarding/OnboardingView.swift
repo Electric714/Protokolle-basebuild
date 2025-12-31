@@ -21,7 +21,7 @@ struct OnboardingView: View {
 
                                         VStack(spacing: 16) {
                                                 _infoRow(
-                                                        title: .localized("What Keystone Reads"),
+                                                        title: .localized("What Protokolle Reads"),
                                                         message: .localized("Streams system log messages from a paired device. No data leaves your device unless you choose to export it."),
                                                         systemImage: "waveform"
                                                 )
@@ -40,7 +40,7 @@ struct OnboardingView: View {
                                         }
 
                                         VStack(alignment: .leading, spacing: 12) {
-                                                Text(.localized("Be sure you trust the pairing file and network path you use. Keystone only reads data the system already exposes over a trusted pairing."))
+                                                Text(.localized("Be sure you trust the pairing file and network path you use. Protokolle only reads data the system already exposes over a trusted pairing."))
                                                         .font(.footnote)
                                                         .foregroundStyle(.secondary)
                                                         .padding()
@@ -71,7 +71,7 @@ struct OnboardingView: View {
 private extension OnboardingView {
         func _header() -> some View {
                 VStack(alignment: .leading, spacing: 8) {
-                        Text(.localized("Keystone"))
+                        Text(.localized("Protokolle"))
                                 .font(.title.bold())
                         Text(.localized("Unified observability for your iOS device."))
                                 .foregroundStyle(.secondary)
