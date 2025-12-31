@@ -108,7 +108,28 @@ extension SYStreamViewController {
                 dataSourceApply(snapshot: snapshot)
         }
 
-	
+
+        func applyTargetFilterToStoredEntries() {
+                let combinedEntries = allEntries + batch
+
+                let filteredEntries = combinedEntries.filter { entry in
+                        passesTargetFilter(entry.log) && (filter?.entryPassesFilter(entry.log) ?? true)
+                }
+
+                allEntries = combinedEntries
+                batch = []
+
+                var snapshot: StepDataSourceSnapshot = .init()
+                snapshot.appendSections([0])
+                snapshot.appendItems(filteredEntries)
+                dataSourceApply(snapshot: snapshot)
+
+                if #available(iOS 17.0, *) {
+                        setNeedsUpdateContentUnavailableConfiguration()
+                }
+        }
+
+
         @objc func clearAll() {
                 var snapshot: StepDataSourceSnapshot = .init()
                 allEntries = []

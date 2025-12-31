@@ -59,7 +59,7 @@ struct DebugSessionView: View {
 
 private extension DebugSessionView {
         var connectionSection: some View {
-                Section(.localized("Connection")) {
+                Section {
                         statusRow(
                                 title: .localized("Tunnel"),
                                 value: socketReachable ? .localized("Reachable") : .localized("Not Reachable"),
@@ -80,13 +80,15 @@ private extension DebugSessionView {
                         .buttonStyle(.borderless)
                         .disabled(isStreaming)
                         .tint(.accentColor)
+                } header: {
+                        Text(.localized("Connection"))
                 } footer: {
                         Text(.localized("Protokolle relies on loopback VPN routing and a valid pairing record to reach the device services."))
                 }
         }
 
         var heartbeatSection: some View {
-                Section(.localized("Heartbeat")) {
+                Section {
                         statusRow(
                                 title: .localized("Last Ping"),
                                 value: RelativeDateTimeFormatter().localizedString(for: lastHeartbeat, relativeTo: Date()),
@@ -107,13 +109,15 @@ private extension DebugSessionView {
                                 }
                                 .buttonStyle(.bordered)
                         }
+                } header: {
+                        Text(.localized("Heartbeat"))
                 } footer: {
                         Text(.localized("A healthy heartbeat keeps the socket ready for log streaming."))
                 }
         }
 
         var streamingSection: some View {
-                Section(.localized("Syslog Streaming")) {
+                Section {
                         statusRow(
                                 title: .localized("Stream"),
                                 value: isStreaming ? .localized("Running") : .localized("Stopped"),
@@ -138,25 +142,29 @@ private extension DebugSessionView {
                                 }
                                 .buttonStyle(.bordered)
                         }
+                } header: {
+                        Text(.localized("Syslog Streaming"))
                 } footer: {
                         Text(.localized("Stream controls reuse the existing log viewer; start here, then swipe back to see live output."))
                 }
         }
 
         var targetSection: some View {
-                Section(.localized("Target App")) {
+                Section {
                         TextField(targetPlaceholder, text: $targetBundleID)
                                 .textInputAutocapitalization(.never)
                                 .disableAutocorrection(true)
 
                         Toggle(.localized("Filter to Target"), isOn: $filterToTarget)
+                } header: {
+                        Text(.localized("Target App"))
                 } footer: {
                         Text(.localized("Enter the bundle identifier to highlight and filter logs for a specific app."))
                 }
         }
 
         var exportSection: some View {
-                Section(.localized("Bug Bundle")) {
+                Section {
                         Button(.localized("Export Debug Bundle"), systemImage: "archivebox.fill") {
                                 let request = DebugSessionExportRequest(
                                         filterToTarget: filterToTarget,
@@ -174,6 +182,8 @@ private extension DebugSessionView {
                         Text(.localized("Exports include filtered logs, preferences, and the target information in the Exports directory."))
                                 .font(.footnote)
                                 .foregroundStyle(.secondary)
+                } header: {
+                        Text(.localized("Bug Bundle"))
                 }
         }
 

@@ -20,10 +20,10 @@ enum Preferences {
         @Storage(key: "SY.bufferLimit", defaultValue: 75000, callback: bufferLimitCallback)
         static var bufferLimit: Int
         /// Target bundle identifier for debug workflows
-        @Storage(key: "SY.targetBundleID", defaultValue: "")
+        @Storage(key: "SY.targetBundleID", defaultValue: "", callback: targetBundleCallback)
         static var targetBundleID: String
         /// Whether to limit logs to the configured target bundle identifier
-        @Storage(key: "SY.filterToTarget", defaultValue: false)
+        @Storage(key: "SY.filterToTarget", defaultValue: false, callback: filterToTargetCallback)
         static var filterToTarget: Bool
         /// Users custom filters set
         @CodableStorage(key: "SY.entryFilter", defaultValue: nil, handler: { _, newValue in
